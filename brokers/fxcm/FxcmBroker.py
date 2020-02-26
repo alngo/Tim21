@@ -19,6 +19,7 @@ class FxcmBroker(Broker):
 
         self.account_id = account_id
         self.token = token
+        self.storage = STORAGE
         self.api = fxcmpy.fxcmpy(
             access_token=token,
             server=server,
@@ -29,7 +30,7 @@ class FxcmBroker(Broker):
         for symbol in symbols:
             data = self.api.get_candles(
                 symbol, period=period, number=number)
-            filename = f"/{symbol.replace('/', '_')}_{period}.csv"
+            filename = f"{symbol.replace('/', '_')}_{period}.csv"
             data.to_csv(os.path.join(STORAGE, filename))
 
     def get_prices(self, symbols=[]):

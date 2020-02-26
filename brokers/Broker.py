@@ -47,6 +47,13 @@ class Broker(object):
         self.__position_event_handler = event_handler
 
     @abstractmethod
+    def init_prices(self, symbols=[]):
+        """
+        Initialize price based on historical data from a broker
+        """
+        raise NotImplementedError('Method is required!')
+
+    @abstractmethod
     def get_prices(self, symbols=[]):
         """
         Query market prices from a broker
