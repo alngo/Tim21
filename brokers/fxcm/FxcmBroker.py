@@ -26,12 +26,13 @@ class FxcmBroker(Broker):
             log_level='error',
             log_file=LOG_FILE)
 
-    def init_prices(self, symbols=[], period="H1", number=10):
+    def init_prices(self, symbols=[], periods=[], number=10):
         for symbol in symbols:
-            data = self.api.get_candles(
-                symbol, period=period, number=number)
-            filename = f"{symbol.replace('/', '_')}_{period}.csv"
-            data.to_csv(os.path.join(STORAGE, filename))
+            for period in periods:
+                data = self.api.get_candles(
+                    symbol, period=period, number=number)
+                filename = f"{symbol.replace('/', '_')}_{period}.csv"
+                data.to_csv(os.path.join(STORAGE, filename))
 
     def get_prices(self, symbols=[]):
         register = {}
