@@ -3,7 +3,7 @@ import os
 from brokers.Broker import Broker
 
 folder = os.path.dirname(os.path.abspath(__file__))
-LOG_FILE = os.path.join(folder, 'log')
+LOG_FILE = os.path.join(folder, 'log.log')
 
 
 class FxcmBroker(Broker):
