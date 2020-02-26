@@ -14,7 +14,7 @@ class Broker(object):
     def on_price_event(self):
         """
         Listeners will receive:
-        symbol, bid, ask
+        symbol, bid, ask, low, high
         """
         return self.__price_event_handler
 
@@ -26,7 +26,7 @@ class Broker(object):
     def on_order_event(self):
         """
         Listeners will receive:
-        transaction_id
+        symbol, quantity, is_buy, transaction_id, status
         """
         return self.__order_event_handler
 
@@ -38,7 +38,7 @@ class Broker(object):
     def on_position_event(self):
         """
         Listeners will receive:
-        symbol, is_long, units, unrealized_pnl, pnl
+        symbol, is_buy, units, unrealized_pnl, pnl
         """
         return self.__position_event_handler
 

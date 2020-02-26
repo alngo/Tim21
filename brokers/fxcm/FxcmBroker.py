@@ -45,8 +45,8 @@ class FxcmBroker(Broker):
             self.api.subscribe_market_data(symbol, [self.process_price])
 
     def process_price(self, data, dataframe):
-        print(data)
-        print(dataframe)
+        symbol = data["Symbol"]
+        self.on_price_event(symbol, dataframe)
 
     def send_market_order(self, symbol, quantity, is_buy):
         if is_buy:
@@ -56,10 +56,9 @@ class FxcmBroker(Broker):
 
         if order is None:
             self.on_order_event(symbol, quantity, is_buy, None, 'NOT_FILLED')
-            return
-
-        tradeId = order.get_tradeId()
-        self.on_order_event(symbol, quantity, is_buy, tradeId, 'FILLED')
+        else:
+            tradeId = order.get_tradeId()
+            self.on_order_event(symbol, quantity, is_buy, tradeId, 'FILLED')
 
     def get_positions(self):
         open_positions = self.api.get_open_positions()
@@ -78,5 +77,3 @@ class FxcmBroker(Broker):
             pnl = closed_positions["grossPL"][index]
             is_buy = closed_positions["isBuy"][index]
             self.on_position_event(symbol, is_buy, units, None, pnl)
-
-        print("ok")
