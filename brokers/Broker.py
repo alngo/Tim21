@@ -40,11 +40,11 @@ class Broker(object):
         Listeners will receive:
         symbol, is_long, units, unrealized_pnl, pnl
         """
-        return self.__order_event_handler
+        return self.__position_event_handler
 
     @on_position_event.setter
     def on_position_event(self, event_handler):
-        self.__order_event_handler = event_handler
+        self.__position_event_handler = event_handler
 
     @abstractmethod
     def get_prices(self, symbols=[]):
