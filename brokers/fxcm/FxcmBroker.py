@@ -1,9 +1,10 @@
 import fxcmpy
+import time
 import os
 from brokers.Broker import Broker
 
 folder = os.path.dirname(os.path.abspath(__file__))
-LOG_FILE = os.path.join(folder, 'log.log')
+LOG_FILE = os.path.join(folder, 'fxcm.log')
 
 
 class FxcmBroker(Broker):
@@ -14,7 +15,7 @@ class FxcmBroker(Broker):
         else:
             server = "demo"
 
-        super(FxcmBroker, self).__init__(0, 0)
+        super(FxcmBroker, self).__init__(8000, 3000)
 
         self.account_id = account_id
         self.token = token
@@ -24,24 +25,32 @@ class FxcmBroker(Broker):
             log_level='error',
             log_file=LOG_FILE)
 
-        def get_prices(self, symbols=[]):
-            prices = []
-            for symbol in symbols:
-                self.api.subscribe_market_data(symbols)
+    def get_prices(self, symbols=[]):
+        register = {}
+        for symbol in symbols:
+            self.api.subscribe_market_data(symbol)
 
-            subscribed_symbols = self.api.get_subscribed_symbols()
+        subscribed_symbols = self.api.get_subscribed_symbols()
 
-            for symbol in subscribed_symbols:
-                price = self.api.get_prices(symbol)
-                prices.append(price)
-                self.api.unsubscribe_market_data(symbol)
+        for symbol in subscribed_symbols:
+            price = self.api.get_prices(symbol)
+            register[symbol] = price
+            self.api.unsubscribe_market_data(symbol)
 
-            for price in prices:
-                self.process_price(price)
+        for symbol, price in register.items():
+            self.process_price(
+                {'Updated': time.time(), 'Rate': [], 'Symbol': symbol}, price)
 
-        def stream_prices(self, symbols=[]):
-            for symbol in symbols:
-                self.api.subscribe_market_data(symbol, self.process_price)
+    def stream_prices(self, symbols=[]):
+        for symbol in symbols:
+            self.api.subscribe_market_data(symbol, [self.process_price])
 
-        def process_price(self, price):
-            print(price)
+    def process_price(self, data, dataframe):
+        print(data)
+        print(dataframe)
+
+    def send_market_order(self, symbol, quantity, is_buy):
+        if is_buy:
+            order = self.api.create_market_buy_order(symbol, quantity)
+        else:
+            order = self.api.create_market_sell_order(symbol, quantity)
