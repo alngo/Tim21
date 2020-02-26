@@ -3,8 +3,9 @@ import time
 import os
 from brokers.Broker import Broker
 
-folder = os.path.dirname(os.path.abspath(__file__))
-LOG_FILE = os.path.join(folder, 'fxcm.log')
+FOLDER = os.path.dirname(os.path.abspath(__file__))
+LOG_FILE = os.path.join(FOLDER, 'fxcm.log')
+STORAGE = os.path.join(FOLDER, 'storage')
 
 
 class FxcmBroker(Broker):
@@ -23,6 +24,13 @@ class FxcmBroker(Broker):
             server=server,
             log_level='error',
             log_file=LOG_FILE)
+
+    def init_prices(self, symbols=[], period="H1", number=10):
+        for symbol in symbols:
+            data = self.api.get_candles(
+                symbol, period=period, number=number)
+            filename = f"/{symbol.replace('/', '_')}_{period}.csv"
+            data.to_csv(os.path.join(STORAGE, filename))
 
     def get_prices(self, symbols=[]):
         register = {}
