@@ -130,7 +130,9 @@ dmypy.json
 
 # misc
 *.csv
+*.swp
 *.vim
 *.DS_store
 *.env
 *.cfg
+*.log
