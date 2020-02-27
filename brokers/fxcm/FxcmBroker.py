@@ -11,13 +11,8 @@ STORAGE = os.path.join(FOLDER, 'storage')
 
 class FxcmBroker(Broker):
     def __init__(self, account_id, token, is_live=False):
-        if is_live:
-            server = "real"
-        else:
-            server = "demo"
-
+        server = "real" if is_live is True else "demo"
         super(FxcmBroker, self).__init__(f"FXCM_{account_id}")
-
         self.account_id = account_id
         self.token = token
         self.storage = STORAGE
@@ -26,6 +21,9 @@ class FxcmBroker(Broker):
             server=server,
             log_level='error',
             log_file=LOG_FILE)
+
+    def flush_price(self, symbol):
+        del self.api.prices[symbol]
 
     def init_prices(self, symbols=[], periods=[], number=10):
         for symbol in symbols:
@@ -81,8 +79,6 @@ class FxcmBroker(Broker):
 
     def get_positions(self):
         open_positions = self.api.get_open_positions()
-        closed_positions = self.api.get_closed_positions()
-
         for index in open_positions.index:
             symbol = open_positions["currency"][index]
             units = open_positions["amountK"][index]
@@ -90,11 +86,3 @@ class FxcmBroker(Broker):
             is_buy = open_positions["isBuy"][index]
             for func in self.on_position_event:
                 func(symbol, is_buy, units, unrealized_pnl, None)
-
-        for index in closed_positions.index:
-            symbol = closed_positions["currency"][index]
-            units = closed_positions["amountK"][index]
-            pnl = closed_positions["grossPL"][index]
-            is_buy = closed_positions["isBuy"][index]
-            for func in self.on_position_event:
-                func(symbol, is_buy, units, None, pnl)

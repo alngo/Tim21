@@ -1,4 +1,4 @@
-from utils.tools import candle_constructor
+from core.utils.tools import candle_constructor
 import pandas as pd
 import os
 
@@ -48,7 +48,7 @@ class Market(object):
                         history = history.append(candle)
                         self.histories[symbol][period]["history"] = history
                         history.to_csv(filepath)
-                        del self.broker.api.prices[symbol]
+                        self.broker.flush_price(symbol)
                         for func in self.__candle_event_handler:
                             func(candle, history)
 

@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime
 from brokers.fxcm.FxcmBroker import FxcmBroker
 from core.markets.Market import Market
-from core.strategies.Strategy import Strategy
+from core.strategies.MeanReversionStrategy import MeanReversionStrategy
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -13,8 +13,10 @@ periods = ["m1"]
 broker = FxcmBroker(account_id=os.getenv("FXCM_ACCOUNT_ID"),
                     token=os.getenv("FXCM_ACCOUNT_TOKEN"))
 
-market = Market(broker, symbols=symbols, periods=periods)
-
-strat = Strategy("test", market)
-
-broker.stream_prices(symbols=symbols)
+strat = MeanReversionStrategy(broker,
+                              symbols=symbols,
+                              periods=periods,
+                              mean_period=5
+                              )
+strat.initialize()
+strat.run()

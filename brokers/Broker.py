@@ -46,6 +46,13 @@ class Broker(object):
         self.__position_event_handler.append(event_handler)
 
     @abstractmethod
+    def flush_price(self, symbol):
+        """
+        Flush price unused dataframe
+        """
+        raise NotImplementedError('Method is required!')
+
+    @abstractmethod
     def init_prices(self, symbols=[]):
         """
         Initialize price based on historical data from a broker

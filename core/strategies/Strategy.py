@@ -4,18 +4,20 @@ import os
 
 
 class Strategy(object):
-    def __init__(self, name, market):
+    def __init__(self, name, broker):
         self.name = name
-        self.market = self.setup(market)
+        self.broker = broker
 
-    def setup(self, market):
-        market.broker.on_price_event = self.on_price_event
-        market.on_candle_event = self.on_candle_event
-        return market
+    @abstractmethod
+    def initialize(self):
+        """
+        initialize strategy
+        """
+        raise NotImplementedError('Method is required!')
 
-    def on_price_event(self, data, dataframe):
-        pass
-
-    def on_candle_event(self, candle, history):
-        pass
-
+    @abstractmethod
+    def run(self):
+        """
+        run strategy
+        """
+        raise NotImplementedError('Method is required!')
