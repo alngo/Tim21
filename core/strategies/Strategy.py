@@ -10,7 +10,12 @@ class Strategy(object):
 
     def setup(self, market):
         market.broker.on_price_event = self.on_price_event
+        market.on_candle_event = self.on_candle_event
         return market
 
     def on_price_event(self, data, dataframe):
-        print("strat price event")
+        pass
+
+    def on_candle_event(self, candle, history):
+        pass
+

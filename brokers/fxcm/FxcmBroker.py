@@ -30,10 +30,16 @@ class FxcmBroker(Broker):
     def init_prices(self, symbols=[], periods=[], number=10):
         for symbol in symbols:
             for period in periods:
+                filename = f"{symbol.replace('/', '_')}_{period}.csv"
+                filepath = os.path.join(STORAGE, filename)
                 data = self.api.get_candles(
                     symbol, period=period, number=number)
-                filename = f"{symbol.replace('/', '_')}_{period}.csv"
-                data.to_csv(os.path.join(STORAGE, filename))
+                if os.path.exists(filepath):
+                    history = pd.read_csv(filepath, index_col="date")
+                    history = history.append(data)
+                else:
+                    history = data
+                history.to_csv(filepath)
 
     def get_prices(self, symbols=[]):
         register = {}

@@ -1,7 +1,6 @@
 import pandas as pd
-from datetime import datetime
 
-PERIOD = {
+SECONDS = {
     "m1": 60,
     "m5": 60 * 5,
     "m15": 60 * 15,
@@ -16,20 +15,16 @@ PERIOD = {
 }
 
 
-def period_is_filled(last, curr, period):
-    a_time = datetime.strptime(last, '%Y-%m-%d %H:%M:%S')
-    b_time = datetime.strptime(curr, '%Y-%m-%d %H:%M:%S')
-    print(b_time.timestamp(), a_time.timestamp(), PERIOD[period])
-    return b_time.timestamp() - a_time.timestamp() <= PERIOD[period]
+def candle_can_be_filled(start_date, end_date, period):
+    return end_date.timestamp() - start_date.timestamp() >= SECONDS[period]
 
 
-def candle_constructor(period, history, dataframe):
-    last_time = history.index[-1][0: 19]
-    current_time = str(dataframe.index[-1])[0: 19]
-    if period_is_filled(last_time, current_time, period):
-        print("candle!")
-        new_candle = pd.DataFrame({
-            "date": current_time,
+def candle_constructor(period, last_date, dataframe):
+    start_date = last_date
+    end_date = dataframe.index[-1]
+    if candle_can_be_filled(start_date, end_date, period):
+        candle = pd.DataFrame({
+            "date": end_date.round('min'),
             "bidlow": [min(dataframe["Bid"])],
             "bidhigh": [max(dataframe["Bid"])],
             "bidopen": [dataframe["Bid"][1]],
@@ -39,5 +34,6 @@ def candle_constructor(period, history, dataframe):
             "askopen": [dataframe["Ask"][1]],
             "askclose": [dataframe["Ask"][-1]],
         })
-        return new_candle
+        candle = candle.set_index('date')
+        return candle
     return None
