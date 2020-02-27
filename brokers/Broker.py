@@ -2,25 +2,24 @@ from abc import abstractmethod
 
 
 class Broker(object):
-    def __init__(self, host, port):
-        self.host = host
-        self.port = port
+    def __init__(self, name):
+        self.name = name
 
-        self.__price_event_handler = None
-        self.__order_event_handler = None
-        self.__position_event_handler = None
+        self.__price_event_handler = []
+        self.__order_event_handler = []
+        self.__position_event_handler = []
 
     @property
     def on_price_event(self):
         """
         Listeners will receive:
-        symbol, bid, ask, low, high
+        data, dataframe
         """
         return self.__price_event_handler
 
     @on_price_event.setter
     def on_price_event(self, event_handler):
-        self.__price_event_handler = event_handler
+        self.__price_event_handler.append(event_handler)
 
     @property
     def on_order_event(self):
@@ -32,7 +31,7 @@ class Broker(object):
 
     @on_order_event.setter
     def on_order_event(self, event_handler):
-        self.__order_event_handler = event_handler
+        self.__order_event_handler.append(event_handler)
 
     @property
     def on_position_event(self):
@@ -44,7 +43,7 @@ class Broker(object):
 
     @on_position_event.setter
     def on_position_event(self, event_handler):
-        self.__position_event_handler = event_handler
+        self.__position_event_handler.append(event_handler)
 
     @abstractmethod
     def init_prices(self, symbols=[]):
