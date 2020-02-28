@@ -1,30 +1,23 @@
+import argparse
 import os
-import pandas as pd
-import numpy as np
-from datetime import datetime
-from brokers.fxcm.FxcmBroker import FxcmBroker
-from strategies.mean_reversions.MeanReversionStrategy import MeanReversionStrategy
 from dotenv import load_dotenv
-import talib
 load_dotenv()
 
-symbols = ["EUR/USD"]
-periods = ["m1"]
 
-broker = FxcmBroker(account_id=os.getenv("FXCM_ACCOUNT_ID"),
-                    token=os.getenv("FXCM_ACCOUNT_TOKEN"))
-
-strat = MeanReversionStrategy(broker,
-                              symbols=symbols,
-                              periods=periods,
-                              mean_period=5
-                              )
-strat.initialize()
-strat.run()
+def usage():
+    parser = argparse.ArgumentParser(description="Algorithmic trading bot")
+    parser.add_argument('--config', dest="config",
+                        type=str, help="config path")
+    parser.add_argument('--mode', dest="mode", default="demo",
+                        type=str, help="demo | real")
+    args = parser.parse_args()
+    return args
 
 
-# df = pd.read_csv("./brokers/fxcm/storage/EUR_USD_m1.csv",
-#                  index_col='date', parse_dates=True)
+def boot_tim21():
+    args = usage()
+    print(f"Tim21 booted with mode: {args.mode}")
 
-# candle = df.iloc[-1]
-# print(type(candle["bidopen"]))
+
+if __name__ == "__main__":
+    boot_tim21()
