@@ -1,4 +1,3 @@
-from core.utils.tools import candle_constructor
 import pandas as pd
 import os
 
@@ -51,8 +50,8 @@ class Market(object):
                 }
                 return histories
 
-    def on_price_event(self, data, dataframe):
-        symbol = data["Symbol"]
+    def on_price_event(self, price, price_data_stream):
+        symbol = price["Symbol"]
         for period in self.periods:
 
             history = self.histories[symbol][period]["history"]
@@ -66,6 +65,8 @@ class Market(object):
                     FREQUENCY_TABLE[period])]
             except KeyError:
                 new_candle = True
+
+            pulse = price_data_stream.index[:-1]
 
             bid = pulse["Bid"]
             ask = pulse["Ask"]
@@ -107,13 +108,13 @@ class Market(object):
                     func(candle, history)
 
         for func in self.__pulse_event_handler:
-            func(data, dataframe, history)
+            func(data, price_data_stream, history)
 
     @property
     def on_pulse_event(self):
         """
         Listeners will receive
-        data, dataframe, history
+        price, price_data_stream, history
         """
         return self.__pulse_event_handler
 

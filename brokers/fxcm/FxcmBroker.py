@@ -22,7 +22,7 @@ class FxcmBroker(Broker):
             log_level='error',
             log_file=LOG_FILE)
 
-    def flush_price(self, symbol):
+    def flush_stream_data_price(self, symbol):
         del self.api.prices[symbol]
 
     def init_prices(self, symbols=[], periods=[], number=10):
@@ -30,13 +30,13 @@ class FxcmBroker(Broker):
             for period in periods:
                 filename = f"{symbol.replace('/', '_')}_{period}.csv"
                 filepath = os.path.join(STORAGE, filename)
-                data = self.api.get_candles(
+                candles = self.api.get_candles(
                     symbol, period=period, number=number)
                 if os.path.exists(filepath):
                     history = pd.read_csv(filepath, index_col="date")
-                    history = history.append(data)
+                    history = history.append(candles)
                 else:
-                    history = data
+                    history = candles
                 history.to_csv(filepath)
 
     def get_prices(self, symbols=[]):
@@ -52,16 +52,24 @@ class FxcmBroker(Broker):
             self.api.unsubscribe_market_data(symbol)
 
         for symbol, price in register.items():
-            self.process_price(
-                {'Updated': pd.Timestamp(), 'Rate': [], 'Symbol': symbol}, price)
+            self.process_price({
+                'Updated': pd.Timestamp(),
+                'Rate': [
+                    price["Bid"],
+                    price["Ask"],
+                    price["Low"],
+                    price["high"]
+                ],
+                'Symbol': symbol
+            }, price)
 
     def stream_prices(self, symbols=[]):
         for symbol in symbols:
             self.api.subscribe_market_data(symbol, [self.process_price])
 
-    def process_price(self, data, dataframe):
+    def process_price(self, price, price_data_stream):
         for func in self.on_price_event:
-            func(data, dataframe)
+            func(price, price_data_stream)
 
     def send_market_order(self, symbol, quantity, is_buy):
         if is_buy:

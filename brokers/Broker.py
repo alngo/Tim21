@@ -13,7 +13,7 @@ class Broker(object):
     def on_price_event(self):
         """
         Listeners will receive:
-        data, dataframe
+        price, data price stream
         """
         return self.__price_event_handler
 
@@ -46,7 +46,7 @@ class Broker(object):
         self.__position_event_handler.append(event_handler)
 
     @abstractmethod
-    def flush_price(self, symbol):
+    def flush_stream_data_price(self, symbol):
         """
         Flush price unused dataframe
         """
