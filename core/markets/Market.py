@@ -66,7 +66,7 @@ class Market(object):
             except KeyError:
                 new_candle = True
 
-            pulse = price_data_stream.index[:-1]
+            pulse = price_data_stream.iloc[-1]
 
             bid = pulse["Bid"]
             ask = pulse["Ask"]
@@ -108,7 +108,7 @@ class Market(object):
                     func(candle, history)
 
         for func in self.__pulse_event_handler:
-            func(data, price_data_stream, history)
+            func(price, price_data_stream, history)
 
     @property
     def on_pulse_event(self):

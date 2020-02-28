@@ -9,22 +9,23 @@ from dotenv import load_dotenv
 import talib
 load_dotenv()
 
-close = np.random.random(100)
-print(close)
-output = talib.SMA(close)
-print(output)
+symbols = ["EUR/USD"]
+periods = ["m1"]
 
-# symbols = ["EUR/USD"]
-# periods = ["m1"]
+broker = FxcmBroker(account_id=os.getenv("FXCM_ACCOUNT_ID"),
+                    token=os.getenv("FXCM_ACCOUNT_TOKEN"))
 
-# broker = FxcmBroker(account_id=os.getenv("FXCM_ACCOUNT_ID"),
-#                     token=os.getenv("FXCM_ACCOUNT_TOKEN"))
+strat = MeanReversionStrategy(broker,
+                              symbols=symbols,
+                              periods=periods,
+                              mean_period=5
+                              )
+strat.initialize()
+strat.run()
 
-# strat = MeanReversionStrategy(broker,
-#                               symbols=symbols,
-#                               periods=periods,
-#                               mean_period=5
-#                               )
-# strat.initialize()
-# strat.run()
 
+# df = pd.read_csv("./brokers/fxcm/storage/EUR_USD_m1.csv",
+#                  index_col='date', parse_dates=True)
+
+# candle = df.iloc[-1]
+# print(type(candle["bidopen"]))
