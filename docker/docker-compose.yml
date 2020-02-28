@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  tim21:
+    build:
+        context: ..
+        dockerfile: "./docker/Dockerfile"
+    working_dir: /root/app
+    volumes:
+        - ..:/root/app/:cached
+    entrypoint:
+        - "python tim21/tim21.py"
+
+  tim21_dev:
+    build:
+        context: ..
+        dockerfile: "./docker/Dockerfile"
+    working_dir: /root/app
+    volumes:
+        - ..:/root/app/:cached
+    entrypoint:
+        - "/bin/bash"

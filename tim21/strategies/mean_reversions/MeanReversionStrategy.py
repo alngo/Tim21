@@ -1,5 +1,5 @@
-from core.strategies.Strategy import Strategy
-from core.markets.Market import Market
+from strategies.Strategy import Strategy
+from markets.Market import Market
 import datetime as dt
 import talib as ta
 import pandas as pd
