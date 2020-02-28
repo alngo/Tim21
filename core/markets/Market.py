@@ -2,6 +2,20 @@ from core.utils.tools import candle_constructor
 import pandas as pd
 import os
 
+FREQUENCY_TABLE = {
+    "m1": "1min",
+    "m5": "2min",
+    "m15": "15min",
+    "m30": "30min",
+    "H1": "1h",
+    "H2": "2h",
+    "H3": "3h",
+    "H4": "4h",
+    "H6": "6h",
+    "H8": "8h",
+    "D1": "1D"
+}
+
 
 class Market(object):
     def __init__(self, broker, symbols=[], periods=[], minimal_row=10):
@@ -12,6 +26,7 @@ class Market(object):
         self.histories = self.setup_histories(broker)
 
         self.__candle_event_handler = []
+        self.__pulse_event_handler = []
 
     def setup_broker(self, broker):
         broker.init_prices(symbols=self.symbols,
@@ -37,20 +52,74 @@ class Market(object):
                 return histories
 
     def on_price_event(self, data, dataframe):
-        for symbol in self.symbols:
-            if symbol == data["Symbol"]:
-                for period in self.periods:
-                    history = self.histories[symbol][period]["history"]
-                    filepath = self.histories[symbol][period]["filepath"]
-                    start_date = history.index[-1]
-                    candle = candle_constructor(period, start_date, dataframe)
-                    if candle is not None:
-                        history = history.append(candle)
-                        self.histories[symbol][period]["history"] = history
-                        history.to_csv(filepath)
-                        self.broker.flush_price(symbol)
-                        for func in self.__candle_event_handler:
-                            func(candle, history)
+        symbol = data["Symbol"]
+        for period in self.periods:
+
+            history = self.histories[symbol][period]["history"]
+            filepath = self.histories[symbol][period]["filepath"]
+
+            candle = None
+            new_candle = False
+
+            try:
+                candle = history.loc[pd.Timestamp.now().ceil(
+                    FREQUENCY_TABLE[period])]
+            except KeyError:
+                new_candle = True
+
+            bid = pulse["Bid"]
+            ask = pulse["Ask"]
+
+            bidlow = candle["bidopen"] if candle is not None else 0
+            bidhigh = candle["bidhigh"] if candle is not None else 0
+            bidopen = candle["bidopen"] if candle is not None else None
+            bidclose = candle["bidclose"] if candle is not None else 0
+            asklow = candle["asklow"] if candle is not None else 0
+            askhigh = candle["askhigh"] if candle is not None else 0
+            askopen = candle["askopen"] if candle is not None else None
+            askclose = candle["askclose"] if candle is not None else 0
+
+            bidlow = bidlow if bidlow <= bid else bid
+            bidhigh = bidhigh if bidhigh >= bid else bid
+            bidopen = candle["bidopen"] if bidopen is not None else bid
+            bidclose = bid
+            asklow = asklow if asklow <= ask else ask
+            askhigh = askhigh if askhigh >= ask else ask
+            bidopen = candle["askopen"] if askopen is not None else ask
+            bidclose = ask
+
+            history.loc[pd.Timestamp.now().ceil(FREQUENCY_TABLE[period])] = [
+                bidlow,
+                bidhigh,
+                bidopen,
+                bidclose,
+                asklow,
+                askhigh,
+                askopen,
+                askclose,
+                None
+            ]
+
+            history.to_csv(filepath)
+            self.histories[symbol][period]["history"] = history
+            if new_candle:
+                for func in self.__candle_event_handler:
+                    func(candle, history)
+
+        for func in self.__pulse_event_handler:
+            func(data, dataframe, history)
+
+    @property
+    def on_pulse_event(self):
+        """
+        Listeners will receive
+        data, dataframe, history
+        """
+        return self.__pulse_event_handler
+
+    @on_pulse_event.setter
+    def on_pulse_event(self, event_handler):
+        self.__pulse_event_handler.append(event_handler)
 
     @property
     def on_candle_event(self):

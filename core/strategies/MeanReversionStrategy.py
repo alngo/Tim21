@@ -24,14 +24,10 @@ class MeanReversionStrategy(Strategy):
 
     def on_candle_event(self, candle, history):
         print("mean reversion candle event")
-        signal = self.mean_signal(history)
 
     def on_price_event(self, data, dataframe):
         print(dt.datetime.now(), '[PRICE]',
               data['Symbol'], dataframe.index[-1])
-
-    def mean_signal(self, history):
-        self.prices =
 
     def on_order_event(seld, symbol, quantity, is_buy, tradeId, status):
         pass
