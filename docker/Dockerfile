@@ -5,9 +5,6 @@ RUN apt-get update \
     && apt-get clean \
     && pip install --upgrade pip
 
-
-WORKDIR /usr/src/app
-
 COPY requirements.txt .
 
 RUN pip install -r requirements.txt
@@ -22,7 +19,5 @@ RUN cd /tmp; \
 	rm ta-lib-0.4.0-src.tar.gz; \
 	rm -rf ta-lib
 RUN pip install TA-Lib
-
-COPY . /usr/src/app/
 
 ENTRYPOINT []
