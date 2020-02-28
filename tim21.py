@@ -1,11 +1,18 @@
 import os
 import pandas as pd
+import numpy as np
 from datetime import datetime
 from brokers.fxcm.FxcmBroker import FxcmBroker
 from core.markets.Market import Market
 from core.strategies.MeanReversionStrategy import MeanReversionStrategy
 from dotenv import load_dotenv
+import talib
 load_dotenv()
+
+close = np.random.random(100)
+print(close)
+output = talib.SMA(close)
+print(output)
 
 # symbols = ["EUR/USD"]
 # periods = ["m1"]
@@ -21,18 +28,3 @@ load_dotenv()
 # strat.initialize()
 # strat.run()
 
-df = pd.read_csv("./brokers/fxcm/storage/EUR_USD_m1.csv",
-                 index_col="date", parse_dates=True)
-
-# print(df)
-
-for i in range(70):
-    df.loc[pd.Timestamp.now().ceil("5min")] = [1, 2, 3, 4, 5, 6, 7, 8, None]
-
-print("---------------")
-candle = df.loc[pd.Timestamp.now().ceil('5min')]
-print(candle)
-print(candle["bidopen"])
-
-if df.loc[pd.Timestamp.now().ceil("10min")] is None:
-    print("errororor")
