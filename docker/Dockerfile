@@ -1,5 +1,16 @@
-FROM python:3.7-alpine
-COPY requirements.txt
+FROM python:3.7
+
+RUN apt-get update \
+    && apt-get -y install curl build-essential libssl-dev \
+    && apt-get clean \
+    && pip install --upgrade pip
+
+
+WORKDIR /usr/src/app
+
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
 
 # TA-Lib
 RUN cd /tmp; \
@@ -10,9 +21,8 @@ RUN cd /tmp; \
 	cd ..; \
 	rm ta-lib-0.4.0-src.tar.gz; \
 	rm -rf ta-lib
+RUN pip install TA-Lib
 
-RUN pip install -r requirements.txt
+COPY . /usr/src/app/
 
-COPY src/ /app
-
-WORKDIR /bot
+ENTRYPOINT []

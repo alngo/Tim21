@@ -1,0 +1,7 @@
+.git
+.gitignore
+Dockerfile
+.dockerignore
+.github
+.travis.yml
+README.md
