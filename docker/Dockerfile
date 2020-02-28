@@ -16,7 +16,7 @@ RUN cd /tmp; \
 	wget http://sourceforge.net/projects/ta-lib/files/ta-lib/0.4.0/ta-lib-0.4.0-src.tar.gz; \
 	tar -xzf ta-lib-0.4.0-src.tar.gz; \
 	cd ta-lib; \
-	./configure ; make; make install; \
+	./configure --prefix=/usr; make; make install; \
 	cd ..; \
 	rm ta-lib-0.4.0-src.tar.gz; \
 	rm -rf ta-lib
