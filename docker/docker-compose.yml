@@ -5,18 +5,17 @@ services:
     build:
         context: ..
         dockerfile: "./docker/Dockerfile"
-    working_dir: "/usr/src/tim21"
+    working_dir: /root/app
     volumes:
-        - "./tim21:/usr/src/tim21:cached"
-    entrypoint:
-        - "python"
+        - ../tim21:/root/app/tim21:cached
+    command: "python tim21/tim21.py"
 
-  tim21_sh:
+  tim21_dev:
     build:
         context: ..
         dockerfile: "./docker/Dockerfile"
-    working_dir: "/usr/src/tim21"
+    working_dir: /root/app
     volumes:
-        - "./tim21:/usr/src/tim21:cached"
+        - ../tim21:/root/app/tim21:cached
     entrypoint:
         - "/bin/bash"

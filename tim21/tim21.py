@@ -3,8 +3,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from brokers.fxcm.FxcmBroker import FxcmBroker
-from core.markets.Market import Market
-from core.strategies.MeanReversionStrategy import MeanReversionStrategy
+from strategies.mean_reversions.MeanReversionStrategy import MeanReversionStrategy
 from dotenv import load_dotenv
 import talib
 load_dotenv()

@@ -5,6 +5,8 @@ RUN apt-get update \
     && apt-get clean \
     && pip install --upgrade pip
 
+WORKDIR /root/app/
+
 COPY requirements.txt .
 
 RUN pip install -r requirements.txt
@@ -18,6 +20,10 @@ RUN cd /tmp; \
 	cd ..; \
 	rm ta-lib-0.4.0-src.tar.gz; \
 	rm -rf ta-lib
+
 RUN pip install TA-Lib
+
+# SocketIO Clien
+RUN pip install python-socketio["client"]
 
 ENTRYPOINT []
