@@ -7,7 +7,7 @@ services:
         dockerfile: "./docker/Dockerfile"
     working_dir: /root/app
     volumes:
-        - ../tim21:/root/app/tim21:cached
+        - ..:/root/app/:cached
     command: "python tim21/tim21.py"
 
   tim21_dev:
@@ -16,6 +16,6 @@ services:
         dockerfile: "./docker/Dockerfile"
     working_dir: /root/app
     volumes:
-        - ../tim21:/root/app/tim21:cached
+        - ..:/root/app/:cached
     entrypoint:
         - "/bin/bash"
