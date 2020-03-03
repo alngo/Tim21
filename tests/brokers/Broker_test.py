@@ -1,10 +1,26 @@
-import requests
-from unittest.mock import Mock, patch
+import pytest
+from tim21.brokers.Broker import Broker
 
 
-def test_request_response():
-    # Send a request to the API server and store the response.
-    response = requests.get('http://jsonplaceholder.typicode.com/todos')
+class TestEmptyBroker:
+    broker = Broker("empty")
 
-    # Confirm that the request-response cycle completed successfully.
-    assert response.ok == True
+    def test_init_prices(self):
+        with pytest.raises(NotImplementedError) as impl:
+            self.broker.init_prices()
+        assert "Method is required!" in str(impl.value)
+
+    def test_get_prices(self):
+        with pytest.raises(NotImplementedError) as impl:
+            self.broker.get_prices()
+        assert "Method is required!" in str(impl.value)
+
+    def test_stream_prices(self):
+        with pytest.raises(NotImplementedError) as impl:
+            self.broker.stream_prices()
+        assert "Method is required!" in str(impl.value)
+
+    def test_send_market_order(self):
+        with pytest.raises(NotImplementedError) as impl:
+            self.broker.send_market_order("EUR/USD", 1, True)
+        assert "Method is required!" in str(impl.value)
