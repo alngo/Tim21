@@ -3,6 +3,8 @@ MODULE := tim21
 BLUE=\033[0;34m
 NC=\033[0m # No Color
 
+.PHONY: sh clean test build
+
 sh: build
 	docker-compose --file docker/docker-compose.yml run tim21_sh
 
