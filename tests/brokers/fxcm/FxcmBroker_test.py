@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 from tim21.brokers.fxcm.FxcmBroker import FxcmBroker
 
 
@@ -12,6 +13,17 @@ class mock_fxcmpy(object):
     def get_candles(self, instrument='', offer_id=None, period='H1', number=10,
                     start=None, end=None, with_index=True, columns=[],
                     stop=None):
+        mock_candle = {}
+        return pd.DataFrame(columns=[
+            'bidopen',
+            'bidclose',
+            'bidhigh',
+            'bidlow'
+            'askopen',
+            'askclose',
+            'askhigh',
+            'asklow'
+        ])
         pass
 
     def subscribe_market_data(self, symbol='', add_callbacks=()):
@@ -40,10 +52,24 @@ class mock_fxcmpy(object):
 
 
 class TestFxcmBroker(object):
-
     def test_init_fxcm(self, mocker):
         mocker.patch('fxcmpy.fxcmpy', mock_fxcmpy)
+
         token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-        broker = FxcmBroker(account_id="test_account",
-                            token="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        broker = FxcmBroker(account_id="test_account", token=token)
+
         assert broker.api.access_token == token
+
+    def test_init_prices(self, mocker):
+        mocker.patch('fxcmpy.fxcmpy', mock_fxcmpy)
+
+        def mock_dataframe_to_csv(self, path):
+            pattern = '.*fxcm/storage/EUR_USD_H1.csv$'
+            assert re.match(pattern, path) is not None
+
+        mocker.patch('pandas.DataFrame.to_csv',
+                     mock_dataframe_to_csv)
+        token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        broker = FxcmBroker(account_id="test_account", token=token)
+
+        broker.init_prices(symbols=["EUR/USD"], periods=["H1"], number=10)
