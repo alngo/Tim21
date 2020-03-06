@@ -1,6 +1,6 @@
-import pandas as pd
-import re
 from tim21.brokers.fxcm.FxcmBroker import FxcmBroker
+import re
+import pandas as pd
 
 
 class mock_fxcmpy(object):
@@ -13,7 +13,6 @@ class mock_fxcmpy(object):
     def get_candles(self, instrument='', offer_id=None, period='H1', number=10,
                     start=None, end=None, with_index=True, columns=[],
                     stop=None):
-        mock_candle = {}
         return pd.DataFrame(columns=[
             'bidopen',
             'bidclose',
@@ -69,7 +68,11 @@ class TestFxcmBroker(object):
 
         mocker.patch('pandas.DataFrame.to_csv',
                      mock_dataframe_to_csv)
+        spy = mocker.spy(mock_fxcmpy, 'get_candles')
         token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
         broker = FxcmBroker(account_id="test_account", token=token)
 
         broker.init_prices(symbols=["EUR/USD"], periods=["H1"], number=10)
+
+        spy.assert_called_once_with(broker.api,
+                                    'EUR/USD', period='H1', number=10)
