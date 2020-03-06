@@ -1,23 +1,13 @@
-import argparse
-import os
-from dotenv import load_dotenv
-load_dotenv()
+from .brokers.fxcm.FxcmBroker import FxcmBroker
 
 
-def usage():
-    parser = argparse.ArgumentParser(description="Algorithmic trading bot")
-    parser.add_argument('--config', dest="config",
-                        type=str, help="config path")
-    parser.add_argument('--mode', dest="mode", default="demo",
-                        type=str, help="demo | real")
-    args = parser.parse_args()
-    return args
+class Tim21:
+    def __init__(self, config_path):
+        self.config_path = config_path
+        self.broker = None
+        self.market = None
+        self.strategy = None
+        self.portfolio = None
 
-
-def boot_tim21():
-    args = usage()
-    print(f"Tim21 booted with mode: {args.mode}")
-
-
-if __name__ == "__main__":
-    boot_tim21()
+    def run(self):
+        print("coucou")

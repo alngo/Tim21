@@ -1,8 +1,7 @@
 import fxcmpy
 import pandas as pd
-import time
 import os
-from brokers.Broker import Broker
+from ..Broker import Broker
 
 FOLDER = os.path.dirname(os.path.abspath(__file__))
 LOG_FILE = os.path.join(FOLDER, 'fxcm.log')

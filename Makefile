@@ -5,6 +5,9 @@ NC=\033[0m # No Color
 
 .PHONY: sh clean test build
 
+run: build
+	docker-compose --file docker/docker-compose.yml run tim21
+
 sh: build
 	docker-compose --file docker/docker-compose.yml run tim21_sh
 
