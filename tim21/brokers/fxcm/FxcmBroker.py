@@ -21,9 +21,6 @@ class FxcmBroker(Broker):
             log_level='error',
             log_file=LOG_FILE)
 
-    def flush_stream_data_price(self, symbol):
-        del self.api.prices[symbol]
-
     def init_prices(self, symbols=[], periods=[], number=10):
         for symbol in symbols:
             for period in periods:
