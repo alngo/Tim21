@@ -11,7 +11,7 @@ services:
     entrypoint:
         - "python tim21/tim21.py"
 
-  tim21_dev:
+  tim21_sh:
     build:
         context: ..
         dockerfile: "./docker/Dockerfile"

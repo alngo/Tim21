@@ -1,8 +1,6 @@
 from strategies.Strategy import Strategy
 from markets.Market import Market
-import datetime as dt
 import talib as ta
-import pandas as pd
 
 
 class MeanReversionStrategy(Strategy):

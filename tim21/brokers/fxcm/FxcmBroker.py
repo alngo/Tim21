@@ -1,8 +1,7 @@
 import fxcmpy
 import pandas as pd
-import time
 import os
-from brokers.Broker import Broker
+from ..Broker import Broker
 
 FOLDER = os.path.dirname(os.path.abspath(__file__))
 LOG_FILE = os.path.join(FOLDER, 'fxcm.log')
@@ -21,9 +20,6 @@ class FxcmBroker(Broker):
             server=server,
             log_level='error',
             log_file=LOG_FILE)
-
-    def flush_stream_data_price(self, symbol):
-        del self.api.prices[symbol]
 
     def init_prices(self, symbols=[], periods=[], number=10):
         for symbol in symbols:
