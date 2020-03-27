@@ -26,9 +26,21 @@ class mock_fxcmpy(object):
         pass
 
     def subscribe_market_data(self, symbol='', add_callbacks=()):
-        self.prices[symbol] = pd.DataFrame(
-            columns=['Bid', 'Ask', 'High', 'Low'])
-        pass
+        data = {
+            'pairs': [
+                {
+                    'Updated': pd.Timestamp(),
+                    'Rates': [1, 2, 3, 4],
+                }
+            ]
+        }
+        if symbol not in self.prices:
+            data = data['pairs'][0]
+            date = pd.to_datetime(int(data['Updated']), unit='ms')
+            self.prices[symbol] = pd.DataFrame([data['Rates'][0:4]],
+                                               columns=['Bid', 'Ask',
+                                                        'High', 'Low'],
+                                               index=[date])
 
     def get_subscribed_symbols(self):
         return self.prices.keys()
@@ -78,19 +90,3 @@ class TestFxcmBroker(object):
 
         spy.assert_called_once_with(broker.api,
                                     'EUR/USD', period='H1', number=10)
-
-    def test_get_prices(self, mocker):
-        mocker.patch('fxcmpy.fxcmpy', mock_fxcmpy)
-
-        spy_subscribe_market = mocker.spy(mock_fxcmpy, 'subscribe_market_data')
-        spy_get_prices = mocker.spy(mock_fxcmpy, 'get_prices')
-        spy_get_subscribed = mocker.spy(mock_fxcmpy, 'get_subscribed_symbols')
-
-        token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-        broker = FxcmBroker(account_id="test_account", token=token)
-
-        broker.get_prices(symbols=["EUR/USD"])
-
-        spy_subscribe_market.assert_called_once_with(broker.api, "EUR/USD")
-        spy_get_subscribed.assert_called_once()
-        spy_get_prices.assert_called_once_with(broker.api, "EUR/USD")
