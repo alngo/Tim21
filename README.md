@@ -1,4 +1,4 @@
-# Tim21
+# Tim21 [Deprecated]
 Algorithmic Trading and Quantitative Analysis
 
 ### Ressources
